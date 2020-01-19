@@ -44,16 +44,22 @@ class OptimalAllocation:
         cov = np.matrix(self.asset_df.cov()) 
         bounds = Bounds(lower_bound, upper_bound)
 
-        optimal_weights = minimize(
+        optimal_solution = minimize(
             sharpe_ratio, 
             initial_weights,
             args=(means, cov),
-            method='trust-constr',
+            method='SLSQP',
             constraints=({'type': 'eq', 'fun': lambda x: 1 - sum(x)}),
             bounds=bounds
         )
-        
-        return pd.Series(optimal_weights.x, index=stock_index)
+
+        if not optimal_solution.success:
+            raise Exception('Optimization failed: {}.'.format(optimal_solution.message))
+
+        optimal_weights = pd.Series(optimal_solution.x, index=stock_index)
+        optimal_sharpe = sharpe_ratio(optimal_solution.x, means, cov)
+
+        return optimal_weights, optimal_sharpe
 
 
 
