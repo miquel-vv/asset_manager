@@ -23,8 +23,17 @@ class Universe():
 
         return start_date, end_date, timeline
 
-    def execute_strategy(self, strat, start=None, end=None):
-        start = self.start_date if start is None else start
-        end = self.end_date if end is None else end
+    def execute_strategy(self, strat, start=None, end=None, date_range=None):
+        weights, ratio, ret, dev = strat(self.get_assets(date_range=date_range))
+        print('Sharpe ratio: ' + str(ratio))
+        print('Return: ' + str(ret))
+        print('St. Dev: ' + str(dev))
+        return weights
 
-        return strat([asset.copy(start, end) for asset in self.assets if asset.include(start)])
+    def get_assets(self, start=None, end=None, date_range=None):
+        if date_range is None:
+            start = self.start_date if start is None else start
+            end = self.end_date if end is None else end
+            return [asset.copy(pd.date_range(start=start, end=end)) for asset in self.assets if asset.include(start)]
+        else:
+            return [asset.copy(date_range=date_range) for asset in self.assets if asset.include(date_range[0])]

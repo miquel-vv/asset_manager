@@ -3,15 +3,19 @@ import numpy as np
 from .asset import Asset
 from scipy.optimize import minimize, LinearConstraint, Bounds
 
-def sharpe_ratio(weights, means, cov):
+def sharpe_ratio(weights, means, cov, optimizer=True):
     weights = np.matrix(weights)
-    ret = means * weights.transpose()
+    ret = np.asscalar(means * weights.transpose())
     step_before_var = weights * cov
     var = step_before_var * weights.transpose()
+    dev = np.asscalar(np.sqrt(var))
 
-    ratio = np.asscalar(ret/var)
+    ratio = ret/dev
 
-    return -ratio # negative because scipy minimizes this function, however bigger is better.
+    if optimizer:
+        return -ratio # negative because scipy minimizes this function, however bigger is better.
+    else:
+        return ratio, ret, dev
 
 class OptimalAllocation:
     
@@ -57,9 +61,9 @@ class OptimalAllocation:
             raise Exception('Optimization failed: {}.'.format(optimal_solution.message))
 
         optimal_weights = pd.Series(optimal_solution.x, index=stock_index)
-        optimal_sharpe = sharpe_ratio(optimal_solution.x, means, cov)
+        optimal_sharpe, ret, dev = sharpe_ratio(optimal_solution.x, means, cov, optimizer=False)
 
-        return optimal_weights, optimal_sharpe
+        return optimal_weights, optimal_sharpe, ret, dev
 
 
 

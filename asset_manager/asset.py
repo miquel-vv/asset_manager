@@ -32,20 +32,30 @@ class Asset:
             return True
 
     def create_dict(self):
-        dict = {
+        self_dict = {
             'id': self.db_id,
             'name': self.name,
             'asset_class': self.asset_class,
             'description': self.description,
             'prices': self.prices
         }
-        return dict
+        return self_dict
 
-    def copy(self, start, end):
-        '''creates a copy of itself, limited in time.'''
-
+    def copy(self, date_range=None):
+        ''' Creates a copy of itself, based on the dates provided. i.e. a version of itself over only
+            one year, or with prices calculated monthly.
+            args:
+                start: first moment
+                end: last moment
+                frequency: the interval between two prices, see pandas Offset aliases for options.
+            returns:
+                A copy of itself.
+        '''
+    
         kwargs = self.create_dict()
-        kwargs['prices'] = self.prices[start:end]
-        kwargs['returns'] = self.returns[start:end]
+        if date_range is None:
+            kwargs['returns'] = self.returns
+        else:
+            kwargs['prices'] = self.prices.reindex(date_range)
 
         return Asset(**kwargs)
