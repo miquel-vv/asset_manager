@@ -17,11 +17,21 @@ def sharpe_ratio(weights, means, cov, optimizer=True):
     else:
         return ratio, ret, dev
 
+def minimum_returns_constr(means, min_return):
+    means = np.matrix(means)
+    def calculate(weights):
+        weights = np.matrix(weights)
+        excess_value = np.asscalar(means * weights.transpose()) - min_return
+        print('Excess value: ' + str(excess_value))
+        return excess_value
+    return calculate
+
 class OptimalAllocation:
     
-    def __init__(self):
+    def __init__(self, min_return):
         self.assets = None
         self.asset_df = None
+        self.min_return = min_return
 
     def __call__(self, assets):
         self.assets = assets
@@ -38,6 +48,8 @@ class OptimalAllocation:
 
     def allocate(self):
         means = self.asset_df.mean()
+        min_returns = minimum_returns_constr(means, self.min_return)
+
         stock_index = means.index
         
         initial_weights = [1/len(means)] * len(means) #equal weights initially
@@ -53,7 +65,10 @@ class OptimalAllocation:
             initial_weights,
             args=(means, cov),
             method='SLSQP',
-            constraints=({'type': 'eq', 'fun': lambda x: 1 - sum(x)}),
+            constraints=(
+                {'type': 'eq', 'fun': lambda x: 1 - sum(x)},
+                {'type': 'ineq', 'fun': min_returns}
+            ),
             bounds=bounds
         )
 
