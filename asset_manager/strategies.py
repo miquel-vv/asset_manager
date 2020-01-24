@@ -3,6 +3,13 @@ import numpy as np
 from .asset import Asset
 from scipy.optimize import minimize, LinearConstraint, Bounds
 
+'''
+TO DO:
+    - Create ability to show diagnostics
+        -Show individual assets mapped by returns over st. dev
+        -Store info about optimization process to later show efficient frontier.
+'''
+
 def sharpe_ratio(weights, means, cov, optimizer=True):
     weights = np.matrix(weights)
     ret = np.asscalar(means * weights.transpose())

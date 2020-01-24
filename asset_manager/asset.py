@@ -1,3 +1,11 @@
+'''
+To Do:
+    -Add store self function that pickles itself.
+    -Add update price method that looks for its latest price.
+    -(if ever) Add get news tone to look for the news sentiment around a certain asset.
+'''
+
+
 class Asset:
     def __init__(self, id, name, asset_class, description, prices, returns=None):
         '''Returns is optional to save computation time while running. However when saving to persistent storage,
