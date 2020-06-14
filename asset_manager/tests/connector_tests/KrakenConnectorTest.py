@@ -27,14 +27,14 @@ def mock_response_kraken(*args, **kwargs):
         return MockResponse({'error': 'URL not found'},404)
 
 class KrakenConnectorTest(unittest.TestCase):
-    def test_test(self):
-        kc = KrakenConnector()
-        self.assertEqual(kc.test(), "Hello")
+    def test_pair(self):
+        kc = KrakenConnector("XETHZEUR")
+        self.assertEqual(kc.asset_pair, "XETHZEUR")
     
     @mock.patch('requests.get', side_effect = mock_response_kraken)
     def test_get_data(self, mocked_get):
         test_data = pd.read_pickle('asset_manager/tests/test_data/etheur.pkl')
-        kc = KrakenConnector()
+        kc = KrakenConnector("XETHZEUR")
         start_date = datetime(2020, 6, 14, 9, 10, tzinfo=timezone.utc)
         result = kc.get_data(start_date,'s')
 
