@@ -28,12 +28,12 @@ class KrakenConnectorTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        engine = db.create_engine('postgres+psycopg2://asset_manager:' + os.environ['PSQL_PASSWORD'] + '@localhost/asset_managment_test_db')
+        engine = db.create_engine('postgres+psycopg2://asset_manager:' + os.environ['PSQL_PASSWORD'] + '@localhost/asset_management_test_db')
         with engine.connect() as con:
             con.execute("DROP TABLE prices;")
 
     def setUp(self):
-        self.engine = db.create_engine('postgres+psycopg2://asset_manager:' + os.environ['PSQL_PASSWORD'] + '@localhost/asset_managment_test_db')
+        self.engine = db.create_engine('postgres+psycopg2://asset_manager:' + os.environ['PSQL_PASSWORD'] + '@localhost/asset_management_test_db')
         clear_prices = db.sql.text("DELETE FROM prices WHERE True")
         with self.engine.connect() as con:
             con.execute("DELETE FROM prices WHERE True")
@@ -46,14 +46,18 @@ class KrakenConnectorTest(unittest.TestCase):
 
         price_mapper.save_prices("ETH", first_five)
 
-        first_five_saved = pd.read_sql_query("SELECT * FROM prices", con=engine, index_col=["time"])
-        first_five_saved.drop("asset_id", inplace=True) 
+        first_five_saved = pd.read_sql_query("SELECT * FROM prices", con=self.engine, index_col=["time"])
+        first_five_saved.drop("asset_id", axis=1, inplace=True) 
 
-        self.assertTrue(first_five.equals(first_five_saved))
+        self.assertTrue(first_five.equals(first_five_saved), 
+                        "Dataframe saved through mapper and retreived from database does not equal original from pickle (etheur.pkl).")
 
         price_mapper.save_prices("ETH", complete_df[5:])
 
-        all_saved = pd.read_sql_query("SELECT * FROM prices", con=engine, index_col=["time"])
-        all_saved.drop("asset_id", inplace=True) 
+        all_saved = pd.read_sql_query("SELECT * FROM prices", con=self.engine, index_col=["time"])
+        all_saved.drop("asset_id", axis=1, inplace=True) 
 
-        self.assertTrue(complete_df.equals(all_saved))
+        self.assertTrue(complete_df.equals(all_saved),
+                        "Dataframe saved through mapper and retreived from database does not equal original from pickle (etheur.pkl).")
+if __name__=="__main__":
+    unittest.main()

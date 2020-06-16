@@ -38,7 +38,8 @@ class KrakenConnectorTest(unittest.TestCase):
         start_date = datetime(2020, 6, 14, 9, 10, tzinfo=timezone.utc)
         result = kc.get_data(start_date,'s')
 
-        self.assertTrue(test_data.equals(result))
+        self.assertTrue(test_data.equals(result), 
+                        "Data gathered through (mocked) api call did not equal dataframe from pickle (etheur.pkl)")
 
 
 if __name__ == "__main__":

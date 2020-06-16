@@ -1,1 +1,1 @@
-from .AssetMapper import AssetMapper
+from .PriceMapper import PriceMapper
