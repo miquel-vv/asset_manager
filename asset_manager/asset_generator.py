@@ -4,7 +4,7 @@ from .asset import Asset
 
 class AssetGenerator():
     def __init__(self):
-        engine = db.create_engine('postgres+psycopg2://asset_manager:o8SFBuu26u@localhost/asset_managment')
+        engine = db.create_engine('postgres+psycopg2://asset_manager:pwd@localhost/asset_managment')
         self.assets = pd.read_sql_query(
             'select * from assets', 
             con=engine
