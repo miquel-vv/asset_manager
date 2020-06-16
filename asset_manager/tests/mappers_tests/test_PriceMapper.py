@@ -10,7 +10,7 @@ class KrakenConnectorTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        engine = db.create_engine('postgres+psycopg2://asset_manager:' + os.environ['PSQL_PASSWORD'] + '@localhost/asset_management_test_db')
+        engine = db.create_engine('postgresql+psycopg2://asset_manager:' + os.environ['PSQL_PASSWORD'] + '@localhost/asset_management_test_db')
         create_prices_table = db.sql.text("""CREATE TABLE prices(
                                                 time TIMESTAMP WITH TIME ZONE, 
                                                 asset_id VARCHAR, 
@@ -28,18 +28,18 @@ class KrakenConnectorTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        engine = db.create_engine('postgres+psycopg2://asset_manager:' + os.environ['PSQL_PASSWORD'] + '@localhost/asset_management_test_db')
+        engine = db.create_engine("postgresql+psycopg2://asset_manager:" + os.environ["PSQL_PASSWORD"] + "@localhost/asset_management_test_db")
         with engine.connect() as con:
             con.execute("DROP TABLE prices;")
 
     def setUp(self):
-        self.engine = db.create_engine('postgres+psycopg2://asset_manager:' + os.environ['PSQL_PASSWORD'] + '@localhost/asset_management_test_db')
+        self.engine = db.create_engine('postgresql+psycopg2://asset_manager:' + os.environ['PSQL_PASSWORD'] + '@localhost/asset_management_test_db')
         clear_prices = db.sql.text("DELETE FROM prices WHERE True")
         with self.engine.connect() as con:
             con.execute("DELETE FROM prices WHERE True")
     
     def test_save_prices(self):
-        price_mapper = PriceMapper()
+        price_mapper = PriceMapper(self.engine)
         complete_df = pd.read_pickle("asset_manager/tests/test_data/etheur.pkl")
 
         first_five = complete_df[:5]
