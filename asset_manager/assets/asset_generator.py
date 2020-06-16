@@ -1,10 +1,11 @@
+import os
 import sqlalchemy as db
 import pandas as pd
 from .asset import Asset
 
 class AssetGenerator():
     def __init__(self):
-        engine = db.create_engine('postgres+psycopg2://asset_manager:o8SFBuu26u@localhost/asset_managment')
+        engine = db.create_engine('postgres+psycopg2://asset_manager:' + os.environ['PSQL_PASSWORD'] + '@localhost/asset_managment')
         self.assets = pd.read_sql_query(
             'select * from assets', 
             con=engine
