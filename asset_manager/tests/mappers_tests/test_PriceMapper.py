@@ -59,5 +59,17 @@ class KrakenConnectorTest(unittest.TestCase):
 
         self.assertTrue(complete_df.equals(all_saved),
                         "Dataframe saved through mapper and retreived from database does not equal original from pickle (etheur.pkl).")
+    
+    def test_get_prices(self):
+        price_mapper = PriceMapper(self.engine)
+        prices = pd.read_pickle("asset_manager/tests/test_data/etheur.pkl")
+        asset_id_list = ["ETH"] * len(prices.index)
+        prices_with_asset = prices.assign(asset_id=asset_id_list)
+        prices_with_asset.to_sql("prices", if_exists="append", con=self.engine)
+
+        prices_from_mapper = price_mapper.get_prices("ETH")
+
+        self.assertTrue(prices.equals(prices_from_mapper))
+
 if __name__=="__main__":
     unittest.main()
