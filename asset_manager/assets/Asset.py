@@ -10,4 +10,12 @@ class Asset:
 
     def get_last_price_date(self):
         return self.prices.index[-1]
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return false
+        return self.asset_id == other.asset_id
+
+    def __hash__(self):
+        return self.asset_id.__hash__()
     

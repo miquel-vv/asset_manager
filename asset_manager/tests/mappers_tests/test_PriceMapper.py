@@ -10,7 +10,7 @@ class KrakenConnectorTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        engine = db.create_engine('postgresql+psycopg2://asset_manager:' + os.environ['PSQL_PASSWORD'] + '@localhost/asset_management_test_db')
+        engine = db.create_engine("postgresql+psycopg2://asset_manager:" + os.environ["PSQL_PASSWORD"] + "@localhost/asset_management_test_db")
         create_prices_table = db.sql.text("""CREATE TABLE prices(
                                                 time TIMESTAMP WITH TIME ZONE, 
                                                 asset_id VARCHAR, 
