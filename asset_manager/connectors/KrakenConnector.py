@@ -11,6 +11,8 @@ class KrakenConnector:
         params = {"since": start_date, "pair": asset_pair, "interval": interval}
         prices_url = self.url.format(lookup = "OHLC") 
         data = self.send_get_request(prices_url, params)["result"][asset_pair]
+        if start_date == data[0][0]:
+            return "UP-TO-DATE"
         return self.transform_to_dataframe(data)
 
     def send_get_request(self, url, params):
@@ -37,3 +39,5 @@ class KrakenConnector:
             })
         
         return df
+
+        

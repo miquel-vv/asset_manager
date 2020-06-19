@@ -32,12 +32,16 @@ class KrakenConnectorTest(unittest.TestCase):
     def test_get_data(self, mocked_get):
         test_data = pd.read_pickle('asset_manager/tests/test_data/etheur.pkl')
         kc = KrakenConnector()
-        start_date = datetime(2020, 6, 14, 9, 10, tzinfo=timezone.utc)
+        start_date = datetime(2020, 6, 14, 9, 9, tzinfo=timezone.utc)
         result = kc.get_prices(start_date, "XETHZEUR", 1) 
  
         self.assertTrue(test_data.equals(result), 
                         "Data gathered through (mocked) api call did not equal dataframe from pickle (etheur.pkl)")
 
+        start_date = datetime(2020, 6, 14, 9, 10, tzinfo=timezone.utc)
+        result = kc.get_prices(start_date, "XETHZEUR", 1) 
+
+        self.assertEqual("UP-TO-DATE", result)
 
 if __name__ == "__main__":
     unittest.main()
