@@ -10,7 +10,17 @@ class KrakenConnector:
         start_date = datetime.timestamp(start_date)
         params = {"since": start_date, "pair": asset_pair, "interval": interval}
         prices_url = self.url.format(lookup = "OHLC") 
-        data = self.send_get_request(prices_url, params)["result"][asset_pair]
+        data = self.send_get_request(prices_url, params)["result"]
+
+        i=0
+        for key, value in data.items():
+            if key != "last":
+                i+=1
+                data = value
+
+        if i!=1:
+            raise ValueError("Data incorrectly parsed.")
+
         if start_date == data[0][0]:
             return "UP-TO-DATE"
         return self.transform_to_dataframe(data)

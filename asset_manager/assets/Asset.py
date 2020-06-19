@@ -1,5 +1,6 @@
 from ..mappers.PriceMapper import PriceMapper
 from ..connectors import KrakenConnector
+import datetime
 
 class Asset:
     def __init__(self, asset_id):
@@ -9,6 +10,8 @@ class Asset:
         self.last_saved_price = self.get_last_price_date()
 
     def get_last_price_date(self):
+        if len(self.prices.index)==0:
+            return datetime.datetime(2020, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
         return self.prices.index[-1]
 
     def __eq__(self, other):

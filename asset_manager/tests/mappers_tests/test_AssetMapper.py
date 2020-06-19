@@ -13,8 +13,8 @@ class AssetMapperTest(unittest.TestCase):
     def setUp(self):
         self.engine = db.create_engine("postgresql+psycopg2://asset_manager:" + os.environ["PSQL_PASSWORD"] + "@localhost/asset_management_test_db")
         with self.engine.connect() as con:
-            con.execute("insert into assets(asset_id, asset_type) values ('AST', 'ASSET')")
-            con.execute("insert into assets(asset_id, asset_type) values ('ETH', 'CRYPTO')")
+            con.execute("insert into assets(asset_id, asset_class) values ('AST', 'ASSET')")
+            con.execute("insert into assets(asset_id, asset_class) values ('ETH', 'CRYPTO')")
     
     def tearDown(self):
         self.engine = db.create_engine("postgresql+psycopg2://asset_manager:" + os.environ["PSQL_PASSWORD"] + "@localhost/asset_management_test_db")

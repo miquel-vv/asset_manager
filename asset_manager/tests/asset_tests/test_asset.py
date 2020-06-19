@@ -15,6 +15,9 @@ class AssetTest(unittest.TestCase):
     def test_last_date(self):
         last_date = datetime.datetime(2020,6,14,9,23, tzinfo=datetime.timezone.utc)
         self.assertEqual(last_date, self.asset.get_last_price_date())
+
+        self.asset.prices = self.prices.iloc[0:0]
+        self.assertEqual(datetime.datetime(2020,1,1,0,0, tzinfo=datetime.timezone.utc), self.asset.get_last_price_date())
     
     def test_equality(self):
         with patch.object(PriceMapper, 'get_prices', return_value=self.prices):
