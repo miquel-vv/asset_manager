@@ -13,5 +13,5 @@ class Crypto(Asset):
         new_prices = self.kraken_connector.get_prices(last_date, self.asset_pair, interval)
         if new_prices=="UP-TO-DATE":
             return
-        self.price_mapper.save_prices(self.asset_id, new_prices)
+        self.price_mapper.save_prices(self.asset_id, new_prices, interval)
         self.prices.append(new_prices)

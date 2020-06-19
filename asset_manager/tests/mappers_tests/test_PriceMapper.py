@@ -20,7 +20,8 @@ class KrakenConnectorTest(unittest.TestCase):
                                                 close NUMERIC(12,6),
                                                 vwap NUMERIC(12, 6),
                                                 volume NUMERIC(16, 8),
-                                                trades_count INTEGER
+                                                trades_count INTEGER,
+                                                span INTEGER
                                             );"""
                                           )
         with engine.connect() as con:
@@ -43,18 +44,18 @@ class KrakenConnectorTest(unittest.TestCase):
 
         first_five = complete_df[:5]
 
-        price_mapper.save_prices("ETH", first_five)
+        price_mapper.save_prices("ETH", first_five, 1)
 
         first_five_saved = pd.read_sql_query("SELECT * FROM prices", con=self.engine, index_col=["time"])
-        first_five_saved.drop("asset_id", axis=1, inplace=True) 
+        first_five_saved.drop(["asset_id", "span"], axis=1, inplace=True) 
 
         self.assertTrue(first_five.equals(first_five_saved), 
                         "Dataframe saved through mapper and retreived from database does not equal original from pickle (etheur.pkl).")
 
-        price_mapper.save_prices("ETH", complete_df[5:])
+        price_mapper.save_prices("ETH", complete_df[5:], 1)
 
         all_saved = pd.read_sql_query("SELECT * FROM prices", con=self.engine, index_col=["time"])
-        all_saved.drop("asset_id", axis=1, inplace=True) 
+        all_saved.drop(["asset_id", "span"], axis=1, inplace=True) 
 
         self.assertTrue(complete_df.equals(all_saved),
                         "Dataframe saved through mapper and retreived from database does not equal original from pickle (etheur.pkl).")
@@ -62,8 +63,10 @@ class KrakenConnectorTest(unittest.TestCase):
     def test_get_prices(self):
         price_mapper = PriceMapper(self.engine)
         prices = pd.read_pickle("asset_manager/tests/test_data/etheur.pkl")
-        asset_id_list = ["ETH"] * len(prices.index)
-        prices_with_asset = prices.assign(asset_id=asset_id_list)
+        length = len(prices.index)
+        span_list = [1] * length
+        asset_id_list = ["ETH"] * length
+        prices_with_asset = prices.assign(asset_id=asset_id_list, span=span_list)
         prices_with_asset.to_sql("prices", if_exists="append", con=self.engine)
 
         prices_from_mapper = price_mapper.get_prices("ETH")
