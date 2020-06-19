@@ -1,4 +1,4 @@
-from ..mappers import PriceMapper
+from ..mappers.PriceMapper import PriceMapper
 from ..connectors import KrakenConnector
 
 class Asset:

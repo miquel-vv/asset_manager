@@ -4,7 +4,7 @@ import pickle
 import sqlalchemy as db
 import pandas as pd
 
-from asset_manager.mappers import PriceMapper
+from asset_manager.mappers.PriceMapper import PriceMapper
 
 class KrakenConnectorTest(unittest.TestCase):
 

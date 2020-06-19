@@ -2,8 +2,8 @@ import unittest
 from unittest.mock import patch
 import pandas as pd
 import datetime
-from asset_manager.assets import Asset
-from asset_manager.mappers import PriceMapper
+from asset_manager.assets.Asset import Asset 
+from asset_manager.mappers.PriceMapper import PriceMapper
 
 class AssetTest(unittest.TestCase):
 
