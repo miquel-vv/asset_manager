@@ -20,7 +20,7 @@ def update_prices(asset_id):
     
     print("Done updating prices.")
 
-if __name__=="__main__":
+def main():
     args = parse_args()
 
     if args.update_prices is not None:

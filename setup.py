@@ -23,8 +23,8 @@ setuptools.setup(
         "pandas",
         "psycopg2",
         "SQLAlchemy"
-    ]
+    ],
     entry_points={
-        "console_scripts": ["asset_manager=asset_manager.ui.cui"]
+        "console_scripts": ["asset_manager=asset_manager.ui.cui:main"]
     }
 )
