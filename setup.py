@@ -24,4 +24,7 @@ setuptools.setup(
         "psycopg2",
         "SQLAlchemy"
     ]
+    entry_points={
+        "console_scripts": ["asset_manager=asset_manager.ui.cui"]
+    }
 )
