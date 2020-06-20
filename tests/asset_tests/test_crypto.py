@@ -7,7 +7,7 @@ import pandas as pd
 
 class CryptoTest(unittest.TestCase):
     def setUp(self):
-        self.prices = pd.read_pickle("asset_manager/tests/test_data/etheur.pkl")
+        self.prices = pd.read_pickle("tests/test_data/etheur.pkl")
         with patch.object(PriceMapper, "get_prices", return_value=self.prices):
             self.crypto1 = Crypto("ETH")
             self.crypto2 = Crypto("BT")

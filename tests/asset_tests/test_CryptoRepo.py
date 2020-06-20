@@ -10,7 +10,7 @@ class CryptoRepoTest(unittest.TestCase):
 
     def setUp(self):
 
-        prices = pd.read_pickle("asset_manager/tests/test_data/etheur.pkl")
+        prices = pd.read_pickle("tests/test_data/etheur.pkl")
 
         with patch.object(PriceMapper, "get_prices", return_value=prices):
             self.crypto1 = Crypto("ETH")

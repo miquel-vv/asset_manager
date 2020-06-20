@@ -40,7 +40,7 @@ class KrakenConnectorTest(unittest.TestCase):
     
     def test_save_prices(self):
         price_mapper = PriceMapper(self.engine)
-        complete_df = pd.read_pickle("asset_manager/tests/test_data/etheur.pkl")
+        complete_df = pd.read_pickle("tests/test_data/etheur.pkl")
 
         first_five = complete_df[:5]
 
@@ -62,7 +62,7 @@ class KrakenConnectorTest(unittest.TestCase):
     
     def test_get_prices(self):
         price_mapper = PriceMapper(self.engine)
-        prices = pd.read_pickle("asset_manager/tests/test_data/etheur.pkl")
+        prices = pd.read_pickle("tests/test_data/etheur.pkl")
         length = len(prices.index)
         span_list = [1] * length
         asset_id_list = ["ETH"] * length

@@ -8,7 +8,7 @@ from asset_manager.mappers.PriceMapper import PriceMapper
 class AssetTest(unittest.TestCase):
 
     def setUp(self):
-        self.prices = pd.read_pickle('asset_manager/tests/test_data/etheur.pkl')
+        self.prices = pd.read_pickle("tests/test_data/etheur.pkl")
         with patch.object(PriceMapper, 'get_prices', return_value=self.prices):
             self.asset = Asset("ETH")
 

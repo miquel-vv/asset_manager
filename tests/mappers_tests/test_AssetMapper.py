@@ -22,7 +22,7 @@ class AssetMapperTest(unittest.TestCase):
             con.execute("delete from assets where true")
 
     def test_get_assets(self):
-        prices = pd.read_pickle("asset_manager/tests/test_data/etheur.pkl")
+        prices = pd.read_pickle("tests/test_data/etheur.pkl")
         with patch.object(PriceMapper, 'get_prices', return_value=prices):
             test_assets = [Asset("AST")]
             test_cryptos = [Crypto("ETH")]

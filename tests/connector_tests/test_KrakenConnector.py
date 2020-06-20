@@ -16,11 +16,11 @@ def mock_response_kraken(*args, **kwargs):
             return self.data
     
     if args[0] == "https://api.kraken.com/0/public/Time":
-        with open("asset_manager/tests/test_data/servertime.json") as f:
+        with open("tests/test_data/servertime.json") as f:
             data = json.load(f)
         return MockResponse(data, 200)
     elif args[0] == "https://api.kraken.com/0/public/OHLC":
-        with open("asset_manager/tests/test_data/etheur.json") as f:
+        with open("tests/test_data/etheur.json") as f:
             data = json.load(f)
         return MockResponse(data, 200)
     else:
@@ -30,7 +30,7 @@ class KrakenConnectorTest(unittest.TestCase):
     
     @mock.patch('requests.get', side_effect = mock_response_kraken)
     def test_get_data(self, mocked_get):
-        test_data = pd.read_pickle('asset_manager/tests/test_data/etheur.pkl')
+        test_data = pd.read_pickle("tests/test_data/etheur.pkl")
         kc = KrakenConnector()
         start_date = datetime(2020, 6, 14, 9, 9, tzinfo=timezone.utc)
         result = kc.get_prices(start_date, "XETHZEUR", 1) 
