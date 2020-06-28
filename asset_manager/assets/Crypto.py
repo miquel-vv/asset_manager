@@ -9,7 +9,7 @@ class Crypto(Asset):
         self.kraken_connector = KrakenConnector()
         self.asset_pair = "{0:X>3}EUR".format(asset_id)
 
-    def load_prices(self, interval):
+    def update_prices(self, interval):
         last_date = self.get_last_price_date()
         new_prices = self.kraken_connector.get_prices(last_date, self.asset_pair, interval)
         if not isinstance(new_prices, pd.DataFrame) and new_prices=="UP-TO-DATE":

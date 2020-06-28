@@ -11,4 +11,4 @@ class Controller:
     def update_all_prices(self):
         cryptos = self.crypto_repo.get_assets()
         for crypto in cryptos:
-            crypto.load_prices(1)
+            crypto.update_prices(1)
