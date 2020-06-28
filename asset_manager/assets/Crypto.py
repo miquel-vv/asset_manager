@@ -15,4 +15,7 @@ class Crypto(Asset):
         if not isinstance(new_prices, pd.DataFrame) and new_prices=="UP-TO-DATE":
             return
         self.price_mapper.save_prices(self.asset_id, new_prices, interval)
-        self.prices = self.prices.append(new_prices, verify_integrity=True)
+        if self.prices is None:
+            self.prices = new_prices
+        else:
+            self.prices = self.prices.append(new_prices, verify_integrity=True)
