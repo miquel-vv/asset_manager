@@ -9,7 +9,8 @@ class AssetMapper:
     
     def get_assets(self):
         asset_type = self.asset_class.__name__.upper()
-        assets_df = pd.read_sql_query("select * from assets", con=self.engine)
+        with self.engine.connect() as conn:
+            assets_df = pd.read_sql_query("select * from assets", con=conn)
         asset_list = [self.asset_class(a["asset_id"]) for _,a in assets_df.iterrows() if a["asset_class"]==asset_type] 
 
         return asset_list
