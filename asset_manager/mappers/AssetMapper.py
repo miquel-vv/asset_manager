@@ -3,8 +3,8 @@ from asset_manager.assets.Asset import Asset
 import pandas as pd
 
 class AssetMapper:
-    def __init__(self, engine=None, asset_class=Asset):
-        self.engine = MapperConnection().get_engine() if engine is None else engine
+    def __init__(self, asset_class=Asset):
+        self.engine = MapperConnection()
         self.asset_class = asset_class
     
     def get_assets(self):

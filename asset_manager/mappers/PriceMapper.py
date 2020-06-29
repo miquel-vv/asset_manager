@@ -3,8 +3,8 @@ import sqlalchemy as db
 from .MapperConnection import MapperConnection
 
 class PriceMapper:
-    def __init__(self, engine=None):
-        self.engine=MapperConnection().get_engine() if engine is None else engine
+    def __init__(self):
+        self.engine=MapperConnection()
         self.base_get_query = "SELECT {fields} FROM prices WHERE asset_id LIKE '{asset_id}' {customs}"
 
     def save_prices(self, asset_id, prices, interval):
@@ -14,10 +14,21 @@ class PriceMapper:
         prices_table = prices.assign(asset_id=asset_id_list, span=span_list)
         prices_table.to_sql("prices", if_exists="append", con=self.engine)
 
-    def get_prices(self, asset_id):
-        prices = pd.read_sql_query(self.base_get_query.format(fields="*",asset_id=asset_id, customs="order by time"),
-                                   con=self.engine,
-                                   index_col=["time"])
+    def get_prices(self, asset_id, start_date=None, end_date=None):
+        
+        custom = ""
+        if start_date is not None:
+            custom = "and time >= '{0}' ".format(start_date.strftime("%Y/%m/%d %H:%M:%S"))
+        if end_date is not None:
+            custom += "and time <= '{0}' ".format(end_date.strftime("%Y/%m/%d %H:%M:%S"))
+        
+        custom += "order by time"
+
+        with self.engine.connect() as conn:
+            prices = pd.read_sql_query(self.base_get_query.format(fields="*",asset_id=asset_id, customs=custom),
+                                       con=conn,
+                                       index_col=["time"])
+
         prices.drop(["asset_id", "span"], axis=1, inplace=True) 
         return prices
     

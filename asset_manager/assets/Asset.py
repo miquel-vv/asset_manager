@@ -20,6 +20,9 @@ class Asset:
         if last_date is None: 
             return datetime.datetime(2020, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
         return last_date
+    
+    def load_prices(self, start_date, end_date):
+        self.prices = self.price_mapper.get_prices(self.asset_id)
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
