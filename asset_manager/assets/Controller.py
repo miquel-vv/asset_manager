@@ -6,7 +6,7 @@ class Controller:
     
     def update_prices(self, asset_name):
        crypto = self.crypto_repo.get_asset(asset_name)  
-       crypto.load_prices(1)
+       crypto.update_prices(1)
     
     def update_all_prices(self):
         cryptos = self.crypto_repo.get_assets()
