@@ -27,19 +27,26 @@ class PriceMapperTest(unittest.TestCase):
         self.price_mapper.save_prices("T", first_five, 1) 
         with self.engine.connect() as conn:
             first_five_saved = pd.read_sql_query("SELECT * FROM prices", con=conn, index_col=["time"])
-        first_five_saved.drop(["asset_id", "span"], axis=1, inplace=True) 
-
+        first_five_saved.drop(["asset_id", "span", "origin"], axis=1, inplace=True) 
         self.assertTrue(first_five.equals(first_five_saved), 
                         "Dataframe saved through mapper and retreived from database does not equal original from pickle (etheur.pkl).")
 
         self.price_mapper.save_prices("T", complete_df[5:], 1)
-
         with self.engine.connect() as conn:
             all_saved = pd.read_sql_query("SELECT * FROM prices", con=conn, index_col=["time"])
-        all_saved.drop(["asset_id", "span"], axis=1, inplace=True) 
-
+        all_saved.drop(["asset_id", "span", 'origin'], axis=1, inplace=True) 
         self.assertTrue(complete_df.equals(all_saved),
                         "Dataframe saved through mapper and retreived from database does not equal original from pickle (etheur.pkl).")
+        
+        origins = ['A'] * len(complete_df.index)
+        artificial_prices = complete_df.assign(origin=origins)
+        self.price_mapper.save_prices('A', artificial_prices, 1) 
+        with self.engine.connect() as conn:
+            check_artificial = pd.read_sql_query("SELECT * FROM prices where asset_id='A'", con=conn, index_col=["time"])
+        check_artificial.drop(["asset_id", "span"], axis=1, inplace=True)
+        self.assertTrue(artificial_prices.equals(check_artificial), 
+                        "Data saved with the artificial origin set, was not saved correctly.")
+
     
     def test_get_prices(self):
         prices = pd.read_pickle("tests/test_data/etheur.pkl")

@@ -12,6 +12,11 @@ class PriceMapper:
         asset_id_list = [asset_id] * length
         span_list = [interval] * length
         prices_table = prices.assign(asset_id=asset_id_list, span=span_list)
+
+        if not 'origin' in prices_table.columns:
+            origins = ['O'] * length
+            prices_table = prices_table.assign(origin=origins)
+
         with self.engine.connect() as conn:
             prices_table.to_sql("prices", if_exists="append", con=conn)
 
@@ -30,7 +35,7 @@ class PriceMapper:
                                        con=conn,
                                        index_col=["time"])
 
-        prices.drop(["asset_id", "span"], axis=1, inplace=True) 
+        prices.drop(["asset_id", "span", "origin"], axis=1, inplace=True) 
         return prices
     
     def get_last_saved_date(self, asset_id):
