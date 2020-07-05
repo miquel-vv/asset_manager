@@ -35,7 +35,7 @@ class PriceMapper:
                                        con=conn,
                                        index_col=["time"])
 
-        prices.drop(["asset_id", "span", "origin"], axis=1, inplace=True) 
+        prices.drop(["asset_id"], axis=1, inplace=True) 
         return prices
     
     def get_last_saved_date(self, asset_id):
