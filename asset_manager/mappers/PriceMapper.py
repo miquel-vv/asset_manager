@@ -7,11 +7,16 @@ class PriceMapper:
         self.engine=MapperConnection()
         self.base_get_query = "SELECT {fields} FROM prices WHERE asset_id LIKE '{asset_id}' {customs}"
 
-    def save_prices(self, asset_id, prices, interval):
+    def save_prices(self, asset_id, prices, interval=None):
         length = len(prices.index)
         asset_id_list = [asset_id] * length
-        span_list = [interval] * length
-        prices_table = prices.assign(asset_id=asset_id_list, span=span_list)
+        prices_table = prices.assign(asset_id=asset_id_list)
+
+        if not "span" in prices_table.columns:
+            if interval is None:
+                raise ValueError("Either an interval or a span columnn must be provided.")
+            span_list = [interval] * length
+            prices_table = prices.assign(asset_id=asset_id_list, span=span_list)
 
         if not 'origin' in prices_table.columns:
             origins = ['O'] * length
@@ -45,5 +50,15 @@ class PriceMapper:
 
         try:
             return time["max"][0]
+        except IndexError:
+            return None
+    
+    def get_first_saved_date(self, asset_id):
+        with self.engine.connect() as conn:
+            time = pd.read_sql_query(self.base_get_query.format(fields="min(time)", asset_id=asset_id, customs=""),
+                                     con=conn)
+            
+        try:
+            return time["min"][0]
         except IndexError:
             return None

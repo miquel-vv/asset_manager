@@ -17,6 +17,7 @@ def get_enriched_data(data):
         return full_detail
 
 class PriceMapperTest(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         MapperConnection("testengine")
@@ -84,6 +85,16 @@ class PriceMapperTest(unittest.TestCase):
         last_date = self.price_mapper.get_last_saved_date("T")
         self.assertEqual(last_date, datetime.datetime(2020,6,14,9,23, tzinfo=datetime.timezone.utc))
     
+    def test_first_saved_date(self):
+        self.assertEqual(None, self.price_mapper.get_first_saved_date("T"))
+        prices = pd.read_pickle("tests/test_data/etheur.pkl")
+        prices_full_detail = get_enriched_data(prices) 
+
+        with self.engine.connect() as conn:
+            prices_full_detail.to_sql("prices", if_exists="append", con=conn)
+
+        first_date = self.price_mapper.get_first_saved_date("T")
+        self.assertEqual(first_date, datetime.datetime(2020,6,14,9,10, tzinfo=datetime.timezone.utc))
 
 if __name__=="__main__":
     unittest.main()
