@@ -52,7 +52,7 @@ class Asset:
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
-            return false
+            return False
         return self.asset_id == other.asset_id
 
     def __hash__(self):
