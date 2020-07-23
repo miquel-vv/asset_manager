@@ -43,3 +43,13 @@ class CryptoTest(unittest.TestCase):
         with patch.object(PriceMapper, "get_last_saved_date", return_value=self.prices.index[4]):
             self.crypto2.update_prices(1)
         self.assertTrue(self.prices.equals(self.crypto2.prices), "Prices df was not appended correctly to the existing prices table.")
+    
+    def test_clean_prices(self):
+        gaps = pd.read_pickle("tests/test_data/gaps.pkl")
+        gaps_filled = pd.read_pickle("tests/test_data/gaps_filled.pkl")
+        self.crypto1.prices=gaps
+
+        self.crypto1.clean_prices()
+
+        self.assertTrue(self.crypto1.prices.equals(gaps_filled), "The gaps in the prices table were not filled correctly.")
+        self.assertTrue(self.crypto1.prices.loc[self.crypto1.prices.origin=="O"].equals(gaps), "The original data was altered during the cleaning process.")

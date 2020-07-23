@@ -8,6 +8,7 @@ class Crypto(Asset):
         super().__init__(asset_id)
         self.kraken_connector = KrakenConnector()
         self.asset_pair = "{0:X>3}EUR".format(asset_id)
+        self.span = 1
 
     def update_prices(self, interval):
         last_date = self.get_last_price_date()
