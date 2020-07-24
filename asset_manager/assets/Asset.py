@@ -1,4 +1,5 @@
 from .errors import OutOfRangeError
+from .PriceCleaner import PriceCleaner
 from ..mappers.PriceMapper import PriceMapper
 from ..connectors import KrakenConnector
 import pandas as pd
@@ -52,7 +53,7 @@ class Asset:
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
-            return false
+            return False
         return self.asset_id == other.asset_id
 
     def __hash__(self):
@@ -63,53 +64,5 @@ class Asset:
             raise AttributeError("Span must be set before cleaning the prices.")
 
         self.prices.sort_index(inplace=True)
-        missing_prices = self.prices[0:0]
-        previous_time = None
-        previous_price = None
-        
-        for time, price in self.prices.iterrows():
-            first_run = previous_time is None
-            if first_run:
-                previous_time = time
-                previous_price = price
-                continue
-            
-            missing_time_slot = time > (previous_time + datetime.timedelta(minutes=self.span))
-
-            if missing_time_slot:
-                print("Found gap between {0} and {1}".format(previous_time, time))
-                missing_prices = missing_prices.append(self.fill_gap(previous_time, previous_price, time, price))
-
-            previous_time = time
-            previous_price = price 
-
-        self.prices = self.prices.append(missing_prices)
-        self.prices.sort_index(inplace=True)
-    
-    def fill_gap(self, time_before_gap, price_before_gap, time_after_gap, price_after_gap):
-        start_time_gap = time_before_gap + datetime.timedelta(minutes=self.span)
-        end_time_gap = time_after_gap - datetime.timedelta(minutes=price_after_gap["span"])
-
-        minutes_to_cover = (time_after_gap - time_before_gap).total_seconds()/60
-        increment_per_minute = (price_after_gap["close"] - price_before_gap["close"])/minutes_to_cover
-
-        process_time = start_time_gap
-        step_price = price_before_gap["close"] + increment_per_minute
-        prices_in_gap = self.prices[0:0]
-        while process_time <= end_time_gap:
-            prices_in_gap.loc[process_time] = {
-                "open": step_price,
-                "high": step_price,
-                "low": step_price,
-                "close": step_price,
-                "vwap": 0,
-                "volume": 0,
-                "trades_count": 0,
-                "origin": "A",
-                "span": self.span 
-            }
-
-            step_price += increment_per_minute
-            process_time += datetime.timedelta(minutes=self.span)
-        
-        return prices_in_gap
+        price_cleaner = PriceCleaner(self.prices, datetime.timedelta(minutes=self.span))
+        self.prices = price_cleaner.get_cleaned_prices()
