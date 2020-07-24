@@ -45,11 +45,17 @@ class CryptoTest(unittest.TestCase):
         self.assertTrue(self.prices.equals(self.crypto2.prices), "Prices df was not appended correctly to the existing prices table.")
     
     def test_clean_prices(self):
-        gaps = pd.read_pickle("tests/test_data/gaps.pkl")
-        gaps_filled = pd.read_pickle("tests/test_data/gaps_filled.pkl")
-        self.crypto1.prices=gaps
+        one_gap = pd.read_pickle("tests/test_data/gaps.pkl")
+        two_gaps = one_gap.drop(one_gap.index[2])
+        one_gap_filled = pd.read_pickle("tests/test_data/gaps_filled.pkl")
+        two_gaps_filled = pd.read_pickle("tests/test_data/two_gaps_filled.pkl")
 
+        self.crypto1.prices=one_gap
         self.crypto1.clean_prices()
+        self.assertTrue(self.crypto1.prices.equals(one_gap_filled), "The gaps in the prices table were not filled correctly.")
+        self.assertTrue(self.crypto1.prices.loc[self.crypto1.prices.origin=="O"].equals(one_gap), "The original data was altered during the cleaning process.")
 
-        self.assertTrue(self.crypto1.prices.equals(gaps_filled), "The gaps in the prices table were not filled correctly.")
-        self.assertTrue(self.crypto1.prices.loc[self.crypto1.prices.origin=="O"].equals(gaps), "The original data was altered during the cleaning process.")
+        self.crypto1.prices=two_gaps
+        self.crypto1.clean_prices()
+        self.assertTrue(self.crypto1.prices.equals(two_gaps_filled), "The gaps in the prices table were not filled correctly.")
+        self.assertTrue(self.crypto1.prices.loc[self.crypto1.prices.origin=="O"].equals(two_gaps), "The original data was altered during the cleaning process.")
