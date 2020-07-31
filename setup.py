@@ -1,6 +1,6 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("readme.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
@@ -21,7 +21,7 @@ setuptools.setup(
     install_requires=[
         "requests",
         "pandas",
-        "psycopg2",
+        "psycopg2-binary",
         "SQLAlchemy"
     ],
     entry_points={
