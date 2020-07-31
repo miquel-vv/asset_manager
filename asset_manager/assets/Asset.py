@@ -1,6 +1,7 @@
 from .errors import OutOfRangeError
 from .PriceCleaner import PriceCleaner
 from ..mappers.PriceMapper import PriceMapper
+from ..mappers.OrderMapper import OrderMapper
 from ..connectors import KrakenConnector
 import pandas as pd
 import datetime
@@ -9,8 +10,10 @@ class Asset:
     def __init__(self, asset_id):
         self.asset_id = asset_id
         self.price_mapper = PriceMapper()
+        self.order_mapper = OrderMapper()
         self.prices=None
         self.span=None
+        self.order_book=None
 
     def get_last_price_date(self):
         last_date = self.price_mapper.get_last_saved_date(self.asset_id)

@@ -10,6 +10,12 @@ class Crypto(Asset):
         self.asset_pair = "{0:X>3}EUR".format(asset_id)
         self.span = 1
 
+    def update_order_book(self):
+        self.order_book = self.kraken_connector.get_order_book(self.asset_pair)
+
+    def save_orders(self):
+        self.order_book.save(self.asset_id)
+
     def update_prices(self, interval):
         last_date = self.get_last_price_date()
         new_prices = self.kraken_connector.get_prices(last_date, self.asset_pair, interval)
